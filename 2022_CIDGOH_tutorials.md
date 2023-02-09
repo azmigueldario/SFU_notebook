@@ -12,51 +12,36 @@
 - According to Jun suggestion, I source the PATH to the modules command and it is now functional in Jupyter notebooks `source /cvmfs/soft.computecanada.ca/config/profile/bash.sh`
 -  **fastqc** does not need to be looped, better to run with all files using a wildcard `/PATH/*fastq.gz` and specify several threads in parallel `-t 8`
 -  **bbmap** can do trimming of adaptors and quality trimming in same run. 
-   -  options for command must not have spaces while writing `option=value`
+   -  options for command must not have spaces while writing (`option=value`)
 
-```sh
-INPUT_DIR="/home/jupyter-mdprieto/reads_directory"
-OUTPUT_DIR="/home/jupyter-mdprieto/results_tutorials/qc"
+
+## 20230209 - Finished sequencing reads tutorials
+
+- Organized results by project (project_name/results_subdirectories)
+- Ran and completed trimming of reads in server. 
+	- Output creates new directory, must specify only filename and not complete PATH (`clean/filename`)
+- Summarized with multiQC
+- Shared tutorial with CIDGOH group for hackaton
+
+```
+# env variables
 adapters_file='/cvmfs/soft.computecanada.ca/easybuild/software/2020/Core/bbmap/38.86/resources/adapters.fa'
+OUTPUT_TRIM="/home/jupyter-mdprieto/tutorials/trimmed_reads"
+INPUT_DIR="/home/jupyter-mdprieto/tutorials/raw_reads"
 
-for R1 in $(ls $INPUT_DIR/*_R1* | head -n 2)
-	do
-	R1=$(basename $R1)
-	R2=$(echo $R1 | sed 's/_R1/_R2/')
-	echo $R1 $R2
-	echo bbduk.sh \
-	in1=$R1 in2=$R2 \
-	out1=clean_$R1 out2=clean_$R2 \
-	ref=$adapters_file \
-	ktrim=r \
-	mink=11\
-	k=23 \
-	mink=11 \
-	hdist=1 \
-	qtrim=rl \
-	trimq=6 \
-	tpe \
-	tbo \
-	threads = 9
-	done
-
-# code is working
-for R1 in $(ls $INPUT_DIR/*_R1* | head -n 2)
-	do
-	R2=$(echo $R1 | sed 's/_R1/_R2/')
-	bbduk.sh \
-	in1=$R1 in2=$R2 \
-	out1=clean_$R1 out2=clean_$R2 \
-	ref=$adapters_file \
-	ktrim=r \
-	mink=11 \
-	k=23 \
-	mink=11 \
-	hdist=1 \
-	qtrim=rl \
-	trimq=6 \
-	tpe \
-	tbo \
-	threads=9
-	done
+# for loop BBtools
+for i in $(ls $INPUT_DIR/*_R1*)
+do
+R1=$(basename $i)
+R2=$(echo $R1 | sed 's/_R1/_R2/')
+bbduk.sh \
+    in1=$INPUT_DIR/$R1 in2=$INPUT_DIR/$R2 \
+    out1=$OUTPUT_TRIM/$R1 out2=$OUTPUT_TRIM/$R2 \
+    ref=$adapters_file \
+    k=23 \
+    trimq=6 \
+    tpe \
+    tbo \
+    threads=9
+done
 ```
