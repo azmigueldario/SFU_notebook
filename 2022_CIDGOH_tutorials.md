@@ -82,30 +82,22 @@ done
 - I will use the P. aeruginosa PAO1 assembly as reference for all quality control (GCF_000006765.1_ASM676v1) together with its corresponding annotation file (GCF_000006765.1_ASM676v1_genomic.gff.gz)
     - These files are stores in the tools directory of my seagull account 
     - Will create a parser for the output of Quast if I have time
-- CheckM is not available as a module. So, instead of creating a virtual environment, I will download a singularity container. 
+- CheckM is not available as a module. So, instead of creating a virtual environment, I will download a singularity container.\
+> singularity pull checkm_1.2.2.sif https://depot.galaxyproject.org/singularity/checkm-genome%3A1.2.2--pyhdfd78af_1
 
-```py
-import  numpy as np
-import argparse
-import pandas as pd
+## 20230302 - Finishing CheckM section
 
-def parse_quast():
-    parser = argparse.ArgumentParser(description='Summarize Quast results')
-    parser.add_argument('-i', '--input', type=str, default=None,
-                        help='report.tsv file from quast')
-    parser.add_argument('-o', '--output', type=str, default=None,
-                        help='output summary file also in tsv')
-    return parser.parse_args()
+- Run the complete pipeline in the eagle cluster and then move results to optimize my time
 
-if __name__ == '__main__':
-    args = parse_args()
-    quast_df = pd.read_csv(args.input, sep='\t')
+```sh
+# code for checkm in eagle
 
+# define checkm PATH
+CHECKM_IMG="/project/60005/cidgoh_share/singularity_imgs/checkm_1.2.2.sif"
 
-if __name__ == '__main__':
-    args = parse_args()
-    df = pd.read_csv(args.input, sep='\t')
-    df[['isolate', 'gene']] = df['Contig'].str.split('-', expand=True)
-    res = df.pivot(index='isolate', columns='Locus', values='Allele')
-    res.to_csv(args.output+".txt", sep='\t', header=False)
+singularity exec -B scratch "$CHECKM_IMG" checkm taxon_set species 'Pseudomonas aeruginosa' /scratch/mdprieto/tutorials_2023
+# 
+
+export PATH=$PATH:$HOME/.globusconnectpersonal-3.2.0/bin
+echo 'export PATH=$PATH:$HOME/.globusconnectpersonal-3.2.0/bin'>>$HOME/.bashrc
 ```
