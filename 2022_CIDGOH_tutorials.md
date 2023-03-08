@@ -89,15 +89,35 @@ done
 
 - Run the complete pipeline in the eagle cluster and then move results to optimize my time
 
-```sh
-# code for checkm in eagle
+## 20230307 - Finished assembly + QC tutorial
 
+- It was not necessary to run **CheckM** in another cluster. For 10 samples it took around 15 min to analyze the presence of marker sets and less than 1 minute to produce the output
+- Tested the code in seagull and updated git repo accordingly
+
+```sh
 # define checkm PATH
 CHECKM_IMG="/project/60005/cidgoh_share/singularity_imgs/checkm_1.2.2.sif"
 
-singularity exec -B scratch "$CHECKM_IMG" checkm taxon_set species 'Pseudomonas aeruginosa' /scratch/mdprieto/tutorials_2023
-# 
+# create reference markers for pseudomonas in scratch directory
+singularity exec -B /scratch,/project "$CHECKM_IMG" checkm \
+    taxon_set species 'Pseudomonas aeruginosa' /scratch/mdprieto/tutorials_2023/pseudomonas.ms
 
-export PATH=$PATH:$HOME/.globusconnectpersonal-3.2.0/bin
-echo 'export PATH=$PATH:$HOME/.globusconnectpersonal-3.2.0/bin'>>$HOME/.bashrc
+# analyze presence of markers 
+singularity exec "$IMG_CHECKM" checkm analyze \
+    /home/jupyter-mdprieto/tools/pseudomonas.ms         `#file with checkm marker set for assemblies` \
+    "$CONTIGS_DIR"                                      `#dir with assemblies in fasta format` \
+    "$ASSEMBLY_CHECKM"                                  `#output directory` \
+    -x fa                                               `#extension of assemblies` \
+    -t 8   
+
+# produce table of contaminations
+singularity exec "$IMG_CHECKM" checkm qa \
+        /home/jupyter-mdprieto/tools/pseudomonas.ms     `#file with checkm marker set for assemblies` \
+        "$ASSEMBLY_CHECKM"                              `#output directory` \
+        --file "$ASSEMBLY_CHECKM/checkm_output.tsv" \
+        --tab_table                                     `# print tabular output` \
+        --threads 8                                     `# number of simultaneous threads for process` \
+        --out_format 1                                  `# format of output 1 = summary, 2 = extended`                        
 ```
+
+## 20230308 - Finished assembly + QC tutorial
