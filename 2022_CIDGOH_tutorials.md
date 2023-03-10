@@ -121,3 +121,46 @@ singularity exec "$IMG_CHECKM" checkm qa \
 ```
 
 ## 20230308 - Finished assembly + QC tutorial
+
+- I try to setup the bakta database for later analysis in eagle. 
+    - Downloaded a new one, light version as it is just for the tutorials. I do not need it to be comprehensive
+    
+- The db in object_storage is not writable and cannot be unpacked in there. Also, it seems to be a previous outdated version. 
+
+```sh
+# eagle
+
+BAKTA_IMG="/project/cidgoh-object-storage/images/bakta_1.7.sif"
+BAKTA_DB="/project/cidgoh-object-storage/database/bakta/db.tar.gz"
+
+# mount etc so the API can access certificates
+singularity exec -B /scratch,/project,/etc "$BAKTA_IMG" bakta_db list
+
+# download new database - run in job to optimize time
+singularity exec -B /scratch,/project,/etc "$BAKTA_IMG" bakta_db download \
+    --output /project/cidgoh-object-storage/eagle/mdprieto/tutorials \
+    --type light
+
+# update database
+singularity exec -B /scratch,/project,/etc "$BAKTA_IMG" bakta_db update \
+    --db "$BAKTA_DB" \
+    --tmp-dir /scratch/mdprieto/tmp_bakta
+
+# run bakta
+singularity exec -B /scratch,/project,/etc "$BAKTA_IMG" bakta \
+    --db "$BAKTA_DB" \
+    ERR10479510_contigs.fa
+```
+
+In seagull
+
+```sh
+# seagull
+BAKTA_IMG="/mnt/cidgoh-object-storage/images/bakta_1.7.sif"
+export BAKTA_DB="/mnt/cidgoh-object-storage/database/bakta/"
+
+singularity exec -B /etc "$BAKTA_IMG" bakta_db list
+
+singularity exec -B /etc "$BAKTA_IMG" bakta 
+
+```
