@@ -123,44 +123,56 @@ singularity exec "$IMG_CHECKM" checkm qa \
 ## 20230308 - Finished assembly + QC tutorial
 
 - I try to setup the bakta database for later analysis in eagle. 
+    - The db in object_storage is not writable and cannot be unpacked in there. Also, it seems to be a previous outdated version.  
+    - Bakta checks for certificates in the /etc directory, I have to mount it to execute succesfully
     - Downloaded a new one, light version as it is just for the tutorials. I do not need it to be comprehensive
-    
-- The db in object_storage is not writable and cannot be unpacked in there. Also, it seems to be a previous outdated version. 
+    - Jobs cannot access object_storage, object_database and such. Have to use different directories
+
 
 ```sh
-# eagle
+# eagle interactive allocation
+salloc --time=1:15:0 --ntasks=4 --mem 8G
+module load singularity
 
-BAKTA_IMG="/project/cidgoh-object-storage/images/bakta_1.7.sif"
+BAKTA_IMG="/project/60005/cidgoh_share/singularity_imgs/bakta_1.7.sif"
 BAKTA_DB="/project/cidgoh-object-storage/database/bakta/db.tar.gz"
 
 # mount etc so the API can access certificates
 singularity exec -B /scratch,/project,/etc "$BAKTA_IMG" bakta_db list
 
-# download new database - run in job to optimize time
+# download new database - light in job to optimize time
 singularity exec -B /scratch,/project,/etc "$BAKTA_IMG" bakta_db download \
-    --output /project/cidgoh-object-storage/eagle/mdprieto/tutorials \
+    --output /project/60005/cidgoh_share/database \
     --type light
 
-# update database
-singularity exec -B /scratch,/project,/etc "$BAKTA_IMG" bakta_db update \
-    --db "$BAKTA_DB" \
-    --tmp-dir /scratch/mdprieto/tmp_bakta
+# export db to ENV variable
+export BAKTA_DB="/project/60005/cidgoh_share/database/db-light"
 
 # run bakta
 singularity exec -B /scratch,/project,/etc "$BAKTA_IMG" bakta \
     --db "$BAKTA_DB" \
-    ERR10479510_contigs.fa
+    /project/60005/mdprieto/tutorials/ERR10479518_contigs.fa
 ```
 
-In seagull
+- In seagull, I bring the downloaded database for Bakta and try to run the program to annotate our 10 genomes in the tutorial. 
+
 
 ```sh
-# seagull
+cp -r object_storage_eagle/mdprieto/tutorials/db-light/ /home/jupyter-mdprieto/tools
+
+# establish ENV variables for PATH to img and db
 BAKTA_IMG="/mnt/cidgoh-object-storage/images/bakta_1.7.sif"
-export BAKTA_DB="/mnt/cidgoh-object-storage/database/bakta/"
+export BAKTA_DB="/home/jupyter-mdprieto/tools/db-light"
 
 singularity exec -B /etc "$BAKTA_IMG" bakta_db list
 
-singularity exec -B /etc "$BAKTA_IMG" bakta 
+singularity exec -B /etc "$BAKTA_IMG" bakta \
+    --db "$BAKTA_DB"                                                        `# path to bakta database` \
+    /home/jupyter-mdprieto/tutorials/contigs/ERR10479518_contigs.fa         `# file to annotate`\
+    --output /home/jupyter-mdprieto/tutorials/annotation/                   `# output directory` \
+    --genus Pseudomonas                                                     `# specify genus of isolate` \
+    --prefix $(echo "ERR10479518_contigs.fa" | grep -Eo "ERR[0-9]+")        `# prefix of sample name only for output`
+
+cp -r object_storage_eagle/mdprieto/tutorials/db-light/
 
 ```
