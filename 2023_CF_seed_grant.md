@@ -8,7 +8,11 @@
 
 The primary dataset is a publicly available collection of lung 16S amplicon sequencing available at NCBI/ENA. The identifier of the project is **PRJNA605315** and the primary URL for NCBI is https://www.ncbi.nlm.nih.gov/bioproject/PRJNA605315/. An associated paper reporting the findings of this project is located at 
 
-The dataset of the project https://www.ncbi.nlm.nih.gov/bioproject/PRJNA679593 seems to contain actual metagenomic information and not just amplicon. The primary article can be found here: [Mac Aogáin et al. 2021](https://www.nature.com/articles/s41591-021-01289-7).
+The dataset of the project https://www.ncbi.nlm.nih.gov/bioproject/?term=PRJNA590225 seems to contain actual metagenomic information and not just amplicon. The primary article can be found here: [Mac Aogáin et al. 2021](https://www.nature.com/articles/s41591-021-01289-7).
+
+No other papers in the ENA or NCBI seem to contain metagenomic data for bronchiectasis by March, 2023.
+
+Suggestion by Amy: https://www.bv-brc.org/app/MetagenomicReadMapping. Helps to maps virulence fo
 
 ## Environment in Eagle
 
