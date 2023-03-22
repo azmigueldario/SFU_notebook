@@ -8,7 +8,7 @@ Files in the `object_storage` that will be read by the other server must have `r
 As the server is dedicated for **CIDGOH**, there is no need to input the account. 
 
 ```
-#!/bin/bash                                 # she bang
+#!/bin/bash                                 
 #SBATCH --mem-per-cpu=10G                   # GB of memory per cpu core - max 120GBper node
 #SBATCH --time=00:30:00                     # walltime
 #SBATCH --cpus-per-task=12                  # CPU cores per task (multithread) - Max 8 
