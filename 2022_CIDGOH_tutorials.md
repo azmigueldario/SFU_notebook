@@ -218,18 +218,13 @@ for i in $(ls /project/60005/mdprieto/tutorials/*contigs.fa)
 ```sh
 cp -r object_storage_eagle/mdprieto/tutorials/db-light/ /home/jupyter-mdprieto/tools
 
-# establish ENV variables for PATH to img and db
-BAKTA_IMG="/mnt/cidgoh-object-storage/images/bakta_1.7.sif"
-export BAKTA_DB="/home/jupyter-mdprieto/tools/db-light"
-
-singularity exec -B /etc "$BAKTA_IMG" bakta_db list
-
+# commands to run in seagull
 singularity exec -B /etc "$BAKTA_IMG" bakta \
-    --db "$BAKTA_DB"                                                        `# path to bakta database` \
-    /home/jupyter-mdprieto/tutorials/contigs/ERR10479518_contigs.fa         `# file to annotate`\
-    --output /home/jupyter-mdprieto/tutorials/annotation/                   `# output directory` \
-    --genus Pseudomonas                                                     `# specify genus of isolate` \
-    --prefix $(echo "ERR10479518_contigs.fa" | grep -Eo "ERR[0-9]+")        `# prefix of sample name only for output`
+    --db "$BAKTA_DB" \
+    /home/jupyter-mdprieto/tutorials/contigs/ERR10479518_contigs.fa \
+    --output /home/jupyter-mdprieto/tutorials/annotation/ \
+    --genus Pseudomonas \
+    --prefix $(echo "ERR10479518_contigs.fa" | grep -Eo "ERR[0-9]+")
 ```
 
 ## 20230320 - Finished bakta annotation 
@@ -257,5 +252,46 @@ mamba create -n tutorials_env
 mamba activate tutorials_env
 mamba install ipykernel jupyter
 python3 -m ipykernel install --user --name=tutorials_env
+
+```
+
+## 20230321 - Finished all project
+
+- A core genome MLST seems to be more complicated to setup. So I will use a core genome SNP approach with **snippy to produce a phylogenetic tree
+- Snippy-multi requires a tab separated file with filenames and paths. Can be contigs or reads. 
+    + Can be created easily by saving every input type (filenames, read_1, read_2, contigs) to a file
+    + Then, files can be joined horizontally using join
+- Easier to run a forloop as snippy-multi does not produce ready to use commands when executing the tool from a container
+
+```sh
+# produce snippy input
+cd /PATH/CONTIGS_DIR
+readlink -f *contigs.fa > path.txt
+ls * contigs.fa > filenames.txt
+paste filenames.txt path.txt > snippy-input.tab
+rm filenames.txt path.txt
+
+
+
+for contig in $(ls $HOME/tutorials/contigs/*contigs.fa | head -n 2)
+do
+    # define isolate name
+    meta=$(basename "$contig" '_contigs.fa')
+
+    # run snippy for each isolate
+    singularity exec "$SNIPPY_IMG" snippy \
+    --outdir "$HOME/tutorials/results_snippy/$meta"  `# save in a subdirectory`\
+    --ctgs "$contig" \
+    --ref $REF_GENOME \
+    --cpus 8 \
+    --force \
+    --cleanup \
+    --quiet
+
+    # produce core genome analysis in results_snippy folder
+    cd $HOME/tutorials/results_snippy/
+    singularity exec "$SNIPPY_IMG" snippy-core --ref $REF_GENOME \
+    /home/jupyter-mdprieto/tutorials/results_snippy/ERR*
+done
 
 ```
