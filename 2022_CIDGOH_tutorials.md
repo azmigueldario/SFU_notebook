@@ -295,3 +295,8 @@ do
 done
 
 ```
+### Cleanup of previous sections and sharing data
+
+- Made sure that the blurbs had a nice flow and content
+- Organized the structure of the results and verified that commands are running with kernel created in virtual environment
+- 

@@ -90,3 +90,56 @@ SRA_IMG="/project/60005/cidgoh_share/singularity_imgs/sra-tools_3.0.0.sif"
 
 
 - Download of 10 samples took less than 10 minutes, so I will ask for 3 hours of wall time for the complete dataset (n= 200)
+
+## 20230322
+
+- Decided to download data for CF and NCFB into separate directories for downstream analysis later on
+- Evaluating CIDGOH pipeline for reads qc
+
+
+```sh
+OUTPUT_QC="/project/60005/mdprieto/cf_seed_2023/results/ngs_qc"
+SEQQC_NF="/scratch/mdprieto/nf-seqqc/main.nf"
+TRIAL_SHEET="/project/60005/mdprieto/cf_seed_2023/raw_data/ncfb_data/samplesheet/trial_ncfb_samplesheet.csv"
+
+NFCORE_IMG="/project/cidgoh-object-storage/images/nf-core_2.7.2.sif"
+
+export NXF_SINGULARITY_CACHEDIR="/project/cidgoh-object-storage/images"
+
+nextflow run $SEQQC_NF \
+    -profile singularity \
+    -resume \
+    -c eagle \
+    --outdir $OUTPUT_QC \
+    --input $TRIAL_SHEET \
+    --skip_assembly \
+    --skip_assembly_qc \
+    --skip_confindr \
+    --skip_subsampling \
+    --max_memory 50GB \
+    --max_cpus 8 \
+    --fasta /project/cidgoh-object-storage/database/test_fasta/GCF_009858895.2_ASM985889v3_genomic.200409.fna.gz 
+```
+### nf-core mag pipeline
+
+- Input needs to be on quotes when specifying path 'PATH/FASTQ_FILES'
+- Minimum cpu requires for bowtie while dehosting is 10 by default
+
+
+```sh
+# install dependencies for mag pipeline
+singularity exec -B /scratch,/etc $NFCORE_IMG nf-core download mag -r 2.3.0 --singularity-cache-only --container singularity --force
+
+nextflow run nf-core/mag -r 2.3.0 \
+    -profile singularity \
+    -resume \
+    --input '/project/60005/mdprieto/cf_seed_2023/raw_data/ncfb_data/fastq/SRX900293*_{1,2}.fastq.gz' \
+    --outdir /project/60005/mdprieto/cf_seed_2023/results/mag \
+    --host_fasta /project/cidgoh-object-storage/database/reference_genomes/human/GRCh38.p14/GCF_000001405.40/GCF_000001405.40_GRCh38.p14_genomic.fna \
+    --kraken2_db /home/mdprieto/object_database/kraken2/k2_standard_20221209.tar.gz \
+    --skip_prodigal \
+    --skip_prokka \
+    --max_memory 50GB \
+    --max_cpus 8
+
+```
