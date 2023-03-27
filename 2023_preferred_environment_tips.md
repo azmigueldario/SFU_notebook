@@ -33,4 +33,7 @@ find . -mindepth 1 -name 'FOLDER_NAME' -prune -o -exec rm -rf {} \;
 
 # paste files horizontally, useful to create csv
 paste file1 file2 --delimiters=,
+
+# branch a repo and set upstream tracking
+git checkout --track origin/BRANCH_NAME
 ```
