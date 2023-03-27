@@ -53,6 +53,16 @@ NXF_SINGULARITY_CACHEDIR="/project/60005/cidgoh_share/singularity_imgs/"
 # directory with scripts for project
 SCRIPTS="/project/60005/mdprieto/cf_seed_2023/scripts" 
 ```
+# Analytical workflow
+
+## Summary of analysis pipeline for diversity measures
+
+1. Download and prepare datasets of lung shotgun metagenomics for NCFB and CF
+2. Perform basic QC of raw reads for all datasets (nf-mag)
+3. Calculate taxonomic abundances in all samples using kraken2 and bracken
+4. Using kraken tools calculate alpha and betadiversity, after classifying samples with predominance of _Pseudomonas_ spp. 
+
+
 # Notebook of advances
 
 ## 20230309
@@ -91,10 +101,13 @@ SRA_IMG="/project/60005/cidgoh_share/singularity_imgs/sra-tools_3.0.0.sif"
 
 - Download of 10 samples took less than 10 minutes, so I will ask for 3 hours of wall time for the complete dataset (n= 200)
 
-## 20230322
+## 20230322 - Exploring nfseqqc pipeline
 
 - Decided to download data for CF and NCFB into separate directories for downstream analysis later on
 - Evaluating CIDGOH pipeline for reads qc
+- Working, still have to review pertinence of report
+- How to calculate diversity from reads, what is the necessary input?
+- **Pipeline does not perform dehosting before calculation of **
 
 
 ```sh
@@ -120,6 +133,11 @@ nextflow run $SEQQC_NF \
     --max_cpus 8 \
     --fasta /project/cidgoh-object-storage/database/test_fasta/GCF_009858895.2_ASM985889v3_genomic.200409.fna.gz 
 ```
+## 20230326 - Running metagenome analysis on Cedar or Eagle
+
+### Defined pipeline for analysis
+
+
 ### nf-core mag pipeline
 
 - Input needs to be on quotes when specifying path 'PATH/FASTQ_FILES'
@@ -130,16 +148,98 @@ nextflow run $SEQQC_NF \
 # install dependencies for mag pipeline
 singularity exec -B /scratch,/etc $NFCORE_IMG nf-core download mag -r 2.3.0 --singularity-cache-only --container singularity --force
 
+NCFB_FASTQ="/project/60005/mdprieto/cf_seed_2023/raw_data/ncfb_data/fastq"
+KRAKEN2_DB="/home/mdprieto/object_database/kraken2/k2_standard_20221209.tar.gz"
+
+# trial with 10 samples
 nextflow run nf-core/mag -r 2.3.0 \
     -profile singularity \
     -resume \
-    --input '/project/60005/mdprieto/cf_seed_2023/raw_data/ncfb_data/fastq/SRX900293*_{1,2}.fastq.gz' \
-    --outdir /project/60005/mdprieto/cf_seed_2023/results/mag \
-    --host_fasta /project/cidgoh-object-storage/database/reference_genomes/human/GRCh38.p14/GCF_000001405.40/GCF_000001405.40_GRCh38.p14_genomic.fna \
-    --kraken2_db /home/mdprieto/object_database/kraken2/k2_standard_20221209.tar.gz \
+    --input "$NCFB_FASTQ/SRX900293*_{1,2}.fastq.gz" \
+    --outdir /scratch/mdprieto/cf_seed_results/nf-mag \
+    --host_genome GRCh38 \
+    --kraken2_db $KRAKEN2_DB \
     --skip_prodigal \
     --skip_prokka \
+    --skip_krona \
+    --skip_spades \
+    --skip_megahit \
+    --skip_binning \
     --max_memory 50GB \
     --max_cpus 8
 
+# all ncfb data
+nextflow run nf-core/mag -r 2.3.0 \
+    -profile singularity \
+    -resume \
+    --input "$NCFB_FASTQ/SRX*_{1,2}.fastq.gz" \
+    --outdir /scratch/mdprieto/cf_seed_results/nf-mag \
+    --host_genome GRCh38 \
+    --kraken2_db $KRAKEN2_DB \
+    --skip_prodigal \
+    --skip_prokka \
+    --skip_krona \
+    --skip_spades \
+    --skip_megahit \
+    --skip_binning \
+    --max_memory 77GB \
+    --max_cpus 8
+    
+```
+
+### nf-core tax profiler
+
+- Requires a pretty specific samplesheet with the following columns: 
+`sample,run_name_accession,platform(ILLUMINA),fastq_1,fastq_2,fasta`
+- I create it for now manually, and if necessary will build a python script to make it automatically ([Useful base script](https://github.com/nf-core/rnaseq/blob/master/bin/fastq_dir_to_samplesheet.py))
+
+```sh
+KRAKEN2_DB="/home/mdprieto/object_database/kraken2/k2_standard_20221209.tar.gz"
+
+# clean and obtain path files
+readlink -f raw_data/ncfb_data/fastq/* | \
+    grep "_1.fastq.gz" 
+
+```
+
+- To run, most options are opt-in. For now, I will explore only a few samples and try to produce results exclusively with Kraken2
+
+```sh
+KRAKEN2_DB="/home/mdprieto/object_database/kraken2/k2_standard_20221209.tar.gz"
+SAMPLE_SHEET="/project/60005/mdprieto/cf_seed_2023/scripts/samplesheet_taxprof.csv"
+DB_CSV="/project/60005/mdprieto/cf_seed_2023/scripts/databases_taxprof.csv"
+
+
+nextflow run nf-core/taxprofiler -r 1.0.0 \
+    -profile singularity \
+    -resume \
+    --input $SAMPLE_SHEET \
+    --databases $DB_CSV \
+    --outdir /scratch/mdprieto/cf_seed_results/taxprof \
+    --perform_shortread_qc \
+    --perform_shortread_hostremoval \
+    --hostremoval_reference /project/cidgoh-object-storage/database/reference_genomes/human/GRCh38.p14/GCF_000001405.40/GCF_000001405.40_GRCh38.p14_genomic.fna \
+    --shortread_hostremoval_index /project/cidgoh-object-storage/database/bowtie_GRCh38 \
+    --run_bracken \
+    --run_kraken2 \
+    --max_cpus 10 \
+    --max_memory 95GB
+
+ # test run    
+nextflow run nf-core/taxprofiler -r 1.0.0 \
+    -profile singularity \
+    -resume \
+    --input /project/60005/mdprieto/cf_seed_2023/scripts/trial_samplesheet.csv \
+    --databases $DB_CSV \
+    --outdir /scratch/mdprieto/cf_seed_results/taxprof \
+    --perform_shortread_qc \
+    --perform_shortread_hostremoval \
+    --hostremoval_reference /project/cidgoh-object-storage/database/reference_genomes/human/GRCh38.p14/GCF_000001405.40/GCF_000001405.40_GRCh38.p14_genomic.fna \
+    --shortread_hostremoval_index /project/cidgoh-object-storage/database/bowtie_GRCh38 \
+    --run_bracken \
+    --run_kraken2 \
+    --max_cpus 8 \
+    --max_memory 60GB
+
+    
 ```
