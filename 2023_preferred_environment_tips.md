@@ -41,7 +41,29 @@ To run an interactive allocation for testing, we can use the following command. 
 
 ```
 salloc --time=1:30:0 --ntasks=1 --cpus-per-task=8  --mem-per-cpu=8G 
+
+# max in a node
+salloc --time=1:30:0 --ntasks=1 --cpus-per-task=10  --mem-per-cpu=11G 
 ```
+
+## Data transfer between cluster
+
+Install and prepare `globus personal connect`
+
+    wget https://downloads.globus.org/globus-connect-personal/linux/stable/globusconnectpersonal-latest.tgz
+    tar xzf globusconnectpersonal-latest.tgz
+
+
+Run without GUI, allows recognition by web server
+
+    # eagle
+    $HOME/globusconnectpersonal-3.2.0/globusconnectpersonal -start &
+
+Inside the same environment, an effective way to transfer big files with the capacity to restart is **rsync**. A large memory allocation to a single core speeds up the process as it is not inherently parallel. 
+
+    rsync -avi --partial --progress  PATH/SOURCE_FILE PATH/DESTINATION_FILE
+
+
 
 ## One liners for command line shell
 
