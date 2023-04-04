@@ -1,4 +1,4 @@
-# Metagenomics preliminary analysis for seed grant
+# Metagenomics preliminary analysis for Cystic Fibrosis Canada seed grant
 
 ## Objective
 
@@ -187,7 +187,7 @@ nextflow run nf-core/mag -r 2.3.0 \
     
 ```
 
-### nf-core tax profiler
+## 20230327 - nf-core tax profiler
 
 - Requires a pretty specific samplesheet with the following columns: 
 `sample,run_name_accession,platform(ILLUMINA),fastq_1,fastq_2,fasta`
@@ -216,7 +216,7 @@ KRAKEN2_DB="/home/mdprieto/object_database/kraken2/k2_standard_20221209.tar.gz"
 SAMPLE_SHEET="/project/60005/mdprieto/cf_seed_2023/scripts/samplesheet_taxprof_ncfb.csv"
 DB_CSV="/project/60005/mdprieto/cf_seed_2023/scripts/databases_taxprof.csv"
 
- # test run    
+# test run    
 nextflow run nf-core/taxprofiler -r 1.0.0 \
     -profile singularity \
     -resume \
@@ -234,3 +234,6 @@ nextflow run nf-core/taxprofiler -r 1.0.0 \
 
     
 ```
+
+- Multiple errors while working with bracken and kraken databases, they seem to be the same name and path, so I will duplicat them. It is a pretty resource intensive process as the file is more than 48 GB. 
+

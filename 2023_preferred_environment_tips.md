@@ -17,13 +17,53 @@ As the server is dedicated for **CIDGOH**, there is no need to input the account
 #SBATCH --output=checkm_tutorials.out       # output_file specification (optional)
 ```
 
+To use more resources, we would have to distribute tasks among the available nodes. 
+The cluster has 10 compute nodes, each with 120 GB of available memory and 16 cores
+
+```sh
+#!/bin/bash                                 
+#SBATCH --mem-per-cpu=11G                           # GB of memory per cpu core - max 120GBper node
+#SBATCH --ntasks=6                                  # number of tasks per node
+#SBATCH --nodes=2                                   # requested number of nodes
+#SBATCH --time=20:00:00                             # walltime
+#SBATCH --cpus-per-task=3                           # CPU cores per task (multithread) - Max 8 
+#SBATCH --job-name="taxprof_pipeline_cf"            # job_name (optional)
+#SBATCH --chdir=/scratch/mdprieto/                  # change directory before executing optional)
+#SBATCH --output=./jobs_output/cfseed_taxprof_cf.out      
+
+######################################################################################################
+```
+
+
 ## Set interactive section
 
 To run an interactive allocation for testing, we can use the following command. No need to specify allocation
 
 ```
 salloc --time=1:30:0 --ntasks=1 --cpus-per-task=8  --mem-per-cpu=8G 
+
+# max in a node
+salloc --time=1:30:0 --ntasks=1 --cpus-per-task=10  --mem-per-cpu=11G 
 ```
+
+## Data transfer between cluster
+
+Install and prepare `globus personal connect`
+
+    wget https://downloads.globus.org/globus-connect-personal/linux/stable/globusconnectpersonal-latest.tgz
+    tar xzf globusconnectpersonal-latest.tgz
+
+
+Run without GUI, allows recognition by web server
+
+    # eagle
+    $HOME/globusconnectpersonal-3.2.0/globusconnectpersonal -start &
+
+Inside the same environment, an effective way to transfer big files with the capacity to restart is **rsync**. A large memory allocation to a single core speeds up the process as it is not inherently parallel. 
+
+    rsync -avi --partial --progress  PATH/SOURCE_FILE PATH/DESTINATION_FILE
+
+
 
 ## One liners for command line shell
 
