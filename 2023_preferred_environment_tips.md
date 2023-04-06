@@ -40,8 +40,12 @@ The cluster has 10 compute nodes, each with 120 GB of available memory and 16 co
 To run an interactive allocation for testing, we can use the following command. No need to specify allocation
 
 ```
-salloc --time=1:30:0 --ntasks=1 --cpus-per-task=8  --mem-per-cpu=8G 
+# cedar must specify allocation
+salloc --time=1:30:0 --ntasks=1 --cpus-per-task=4  --mem-per-cpu=8G --account=def-whsiao-ab
 
+
+# eagle
+salloc --time=1:30:0 --ntasks=1 --cpus-per-task=4  --mem-per-cpu=8G 
 # max in a node
 salloc --time=1:30:0 --ntasks=1 --cpus-per-task=10  --mem-per-cpu=11G 
 ```
