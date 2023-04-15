@@ -81,3 +81,11 @@ paste file1 file2 --delimiters=,
 # branch a repo and set upstream tracking
 git checkout --track origin/BRANCH_NAME
 ```
+
+## Using pushd and popd
+
+- `pushd` adds a directory to the stack 
+    - `push -n` adds a directory as second in the stack
+    - `push +2` moves to the second directory in the stack 
+- `dirs` lets you see the stack
+- `popd` moves to the last added directory in the stack and removes it from the list
