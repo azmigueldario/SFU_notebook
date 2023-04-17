@@ -295,8 +295,14 @@ do
 done
 
 ```
-### Cleanup of previous sections and sharing data
+## 20230416 - Cleanup of previous sections and sharing data
 
-- Made sure that the blurbs had a nice flow and content
-- Organized the structure of the results and verified that commands are running with kernel created in virtual environment
-- 
+- For `raw_reads_processing`
+    - Made sure that the blurbs had a nice flow and content 
+    - Organized the structure of the results and verified that commands are running with kernel created in virtual environment
+- For `genome_assembly`
+    - Updated text in the blurbs
+    - Added additional explanations to terms and references to external URLs
+    - Printed tree structure of directories after every major step
+    - Verified how the commands were running
+    
