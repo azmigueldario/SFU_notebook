@@ -1,6 +1,16 @@
+# Introduction
+
+This is not a project per se but more of a documentation of my experiences while learning **Nextflow**. In mid 2022 when I tried to dip my toes in **Nextflow** I had a hard time understanding the syntax and only after getting more familiar with scripting in **Python** I feel like I am up to the challenge. 
+
+Thus, I will try to list resources to review when I need to re-visit any topic and also provide quick snippets and tips for my future scripting. Finally, as in all my other notebooks, I will register my advances with dates. 
+
 ## Useful resources
 
-https://medium.com/23andme-engineering/introduction-to-nextflow-4d0e3b6768d1#5b41
+- Yearly aggregated list of resources to learn Nextflow - [2023 link](https://www.nextflow.io/blog/2023/learn-nextflow-in-2023.html)
+- Introduction to Nextflow form Seqera Labs, not updated to use DSL 2 (https://github.com/seqeralabs/nextflow-tutorial)
+
+
+# Notebook of activities
 
 ## 20230301
 
