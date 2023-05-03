@@ -295,7 +295,7 @@ do
 done
 
 ```
-## 20230416 - Cleanup of previous sections and sharing data
+## 20230416 - Cleanup of previous sections
 
 - For `raw_reads_processing`
     - Made sure that the blurbs had a nice flow and content 
@@ -305,4 +305,10 @@ done
     - Added additional explanations to terms and references to external URLs
     - Printed tree structure of directories after every major step
     - Verified how the commands were running
+
+## 20230502 - Final clean up of tutorials
+
+- Finished review of all tutorials, including updated to blurbs and additional references for further reading. 
+- Uploaded everything to `shared_notebooks` (`/share/jupyterNote`)  directory in **Seagull** 
+- Once everything is deployed, I will request feedback
     
