@@ -9,6 +9,12 @@ Thus, I will try to list resources to review when I need to re-visit any topic a
 - Yearly aggregated list of resources to learn Nextflow - [2023 link](https://www.nextflow.io/blog/2023/learn-nextflow-in-2023.html)
 - Introduction to Nextflow form Seqera Labs, not updated to use DSL 2 (https://github.com/seqeralabs/nextflow-tutorial)
 
+## Snippets and tips
+
+Download docker containers as singularity images 
+
+> singularity pull docker://URL
+
 
 # Notebook of activities
 
@@ -23,3 +29,7 @@ Thus, I will try to list resources to review when I need to re-visit any topic a
     + val (meta) means that it expects a value
     + path (reads) needs file(s) from a particular PATH
 - Pipeline parameters are specified as `params.parameter_name` and can be modified from the default in the pipeline by specifying it in the call as `--parameter_name`
+
+## 20230503 - Working through the Seqera Labs tutorial
+
+- parameter for execution are defined as `params.variable` and can be specified in call to nextflow as `--variable XXXXX` 
