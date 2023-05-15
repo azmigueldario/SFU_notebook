@@ -15,6 +15,14 @@ As the server is dedicated for **CIDGOH**, there is no need to input the account
 #SBATCH --job-name="assembly_qc_checkm"     # job_name (optional)
 #SBATCH --chdir=/scratch/mdprieto/          # change directory before executing optional)
 #SBATCH --output=checkm_tutorials.out       # output_file specification (optional)
+
+#!/bin/bash                                 
+#SBATCH --mem-per-cpu=10G                   
+#SBATCH --time=00:30:00                     
+#SBATCH --cpus-per-task=12                  
+#SBATCH --job-name="assembly_qc_checkm"     
+#SBATCH --chdir=/scratch/mdprieto/          
+#SBATCH --output=checkm_tutorials.out       
 ```
 
 To use more resources, we would have to distribute tasks among the available nodes. 
@@ -45,9 +53,9 @@ salloc --time=1:30:0 --ntasks=1 --cpus-per-task=4  --mem-per-cpu=8G --account=de
 
 
 # eagle
-salloc --time=1:30:0 --ntasks=1 --cpus-per-task=4  --mem-per-cpu=8G 
+salloc --time=1:30:00 --ntasks=1 --cpus-per-task=6  --mem-per-cpu=8G 
 # max in a node
-salloc --time=1:30:0 --ntasks=1 --cpus-per-task=10  --mem-per-cpu=11G 
+salloc --time=1:30:00 --ntasks=1 --cpus-per-task=10  --mem-per-cpu=11G 
 ```
 
 ## Data transfer between cluster
