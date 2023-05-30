@@ -27,6 +27,22 @@ output:
 
 Multi-line comments are specified inside `/*  <COMMENTS>  */`
 
+# Important definitions
+
+### Parameters
+
+Parameters are defined inside the pipeline as `params.variable` and can be called in execution using:
+
+    nextflow run script.nf --variable user_defined_value
+
+### Channel factories
+
+The factory `channel.of` creates a queue channel with values as arguments
+
+    ch1 = channel.of (1, 3, 5, 8)
+    ch.view{ "value: $it" }
+
+
 # Notebook of activities
 
 ## 20230301
@@ -42,9 +58,14 @@ Multi-line comments are specified inside `/*  <COMMENTS>  */`
 
 - Pipeline parameters are specified as `params.parameter_name` and can be modified from the default in the pipeline by specifying it in the call as `--parameter_name`
 
-## 20230503 - Working through the Seqera Labs tutorial
+## 20230503 - Working through the Seqera Labs tutorial I
 
 - parameter for execution are defined as `params.variable` and can be specified in call to nextflow as `--variable XXXXX` 
 
 - **_output_** in a process is similar to the return function in python
     - It specifies what is actually produced outside of the process 
+
+## 20230528 - Finished working through the Seqera Labs tutorial II
+
+- Eagle cluster requires you to use apptainer now instead of singularity, but there is an issue with username id that needs to be solved from the developer end
+- 
