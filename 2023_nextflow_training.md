@@ -42,6 +42,25 @@ The factory `channel.of` creates a queue channel with values as arguments
     ch1 = channel.of (1, 3, 5, 8)
     ch.view{ "value: $it" }
 
+### Order of assignment output
+
+```groovy
+//--snippet--
+    output:
+    val x 
+    val 'str'
+    val "${infile.name}".out
+
+workflow{
+    (ch_var, ch_str, ch_exp) = foo(ch_dummy)
+    /* assignment of foo output is done as follows:
+        ch_var = x
+        ch_str = 'str'
+        ch_exp = "${infile.name}".out
+        */
+}
+```
+
 
 # Notebook of activities
 
@@ -68,4 +87,6 @@ The factory `channel.of` creates a queue channel with values as arguments
 ## 20230528 - Finished working through the Seqera Labs tutorial II
 
 - Eagle cluster requires you to use apptainer now instead of singularity, but there is an issue with username id that needs to be solved from the developer end
-- 
+- Working through extended explanations from Seqera, adding notes to repository as it goes
+- Learnt more about definition of operators to modify channels as necessary
+- In a process defined in nextflow, the order of output defines the assignment

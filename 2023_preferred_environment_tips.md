@@ -53,7 +53,7 @@ salloc --time=1:30:0 --ntasks=1 --cpus-per-task=4  --mem-per-cpu=8G --account=de
 
 
 # eagle
-salloc --time=1:30:00 --ntasks=1 --cpus-per-task=6  --mem-per-cpu=8G 
+salloc --time=1:30:00 --ntasks=1 --cpus-per-task=6  --mem-per-cpu=4G 
 # max in a node
 salloc --time=1:30:00 --ntasks=1 --cpus-per-task=10  --mem-per-cpu=11G 
 ```
@@ -69,7 +69,7 @@ Install and prepare `globus personal connect`
 Run without GUI, allows recognition by web server
 
     # eagle
-    $HOME/globusconnectpersonal-3.2.0/globusconnectpersonal -start &
+    $HOME/.globusconnectpersonal-3.2.0/globusconnectpersonal -start &
 
 Inside the same environment, an effective way to transfer big files with the capacity to restart is **rsync**. A large memory allocation to a single core speeds up the process as it is not inherently parallel. 
 
@@ -97,3 +97,9 @@ git checkout --track origin/BRANCH_NAME
     - `push +2` moves to the second directory in the stack 
 - `dirs` lets you see the stack
 - `popd` moves to the last added directory in the stack and removes it from the list
+
+## Singularity was changed to apptainer in 2023
+
+Load in eagle with  
+
+> module load  StdEnv/2020 apptainer/1.1.8
