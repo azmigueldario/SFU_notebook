@@ -10,11 +10,9 @@ Thus, I will try to list resources to review when I need to re-visit any topic a
 - Introduction to Nextflow form Seqera Labs, not updated to use DSL 2 (https://github.com/seqeralabs/nextflow-tutorial)
 - The [Nextflow documentation](https://www.nextflow.io/docs/latest/index.html) is a comprehensive guide to concepts and in-depth dynamics
 
-## Snippets and tips
+# Important definitions
 
-Download docker containers as singularity images 
-
-> singularity pull docker://URL
+### Input and output 
 
 Structure to define **_input_** and **_output_**
 ```
@@ -25,9 +23,18 @@ output:
     <output qualifier> <output name> [, <option>: <option value>]
 ```
 
+To show the standard output of the process in the terminal use the **Directive:**
+    debug true
+
+### Multi line comments
+
 Multi-line comments are specified inside `/*  <COMMENTS>  */`
 
-# Important definitions
+```groovy
+/* This would be a
+multi-line comment written out
+of the script */
+```
 
 ### Parameters
 
@@ -89,4 +96,4 @@ workflow{
 - Eagle cluster requires you to use apptainer now instead of singularity, but there is an issue with username id that needs to be solved from the developer end
 - Working through extended explanations from Seqera, adding notes to repository as it goes
 - Learnt more about definition of operators to modify channels as necessary
-- In a process defined in nextflow, the order of output defines the assignment
+- In a process defined in nextflow, the order of `output:` defines the assignment
