@@ -97,3 +97,10 @@ workflow{
 - Working through extended explanations from Seqera, adding notes to repository as it goes
 - Learnt more about definition of operators to modify channels as necessary
 - In a process defined in nextflow, the order of `output:` defines the assignment
+
+## 202300601 - Reading through additional information from [Seqera](https://training.seqera.io/) and the [nextflow documentation](https://www.nextflow.io/docs/latest/index.html)
+
+- Nextflow stages every process with the staged files in a different directory, guaranteeing that even if two files have the same name, they won't be overwritten
+- Expansion of variables sometimes requires the use of single quotes 
+- 
+
