@@ -68,6 +68,24 @@ workflow{
 }
 ```
 
+### Define a function (method)
+
+If a **return**  is not explicitly stated, groovy returns the last value evaluated.
+A method can be initiated by typing `def` or a type of **return** ike `String|int`
+
+```groovy
+
+int fib(int n) { 
+        // <- defines a return as int
+        // <- method named fib receives an 'int' as input
+    return n < 2 ? 1 : fib(n-1) + fib(n-2)
+        // <- if 'n < 2' it returns 1
+        // <- otherwise it evaluates and returns the expression
+}
+
+assert fib(10)==89
+
+```
 
 # Notebook of activities
 
@@ -102,5 +120,5 @@ workflow{
 
 - Nextflow stages every process with the staged files in a different directory, guaranteeing that even if two files have the same name, they won't be overwritten
 - Expansion of variables sometimes requires the use of single quotes 
-- 
+-  How to define functions in the groovy language added note
 
