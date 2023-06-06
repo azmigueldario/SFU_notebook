@@ -4,7 +4,7 @@ This is not a project per se but more of a documentation of my experiences while
 
 Thus, I will try to list resources to review when I need to re-visit any topic and also provide quick snippets and tips for my future scripting. Finally, as in all my other notebooks, I will register my advances with dates. 
 
-## Useful resources
+### Useful resources
 
 - Yearly aggregated list of resources to learn Nextflow - [2023 link](https://www.nextflow.io/blog/2023/learn-nextflow-in-2023.html)
 - Introduction to Nextflow form Seqera Labs, not updated to use DSL 2 (https://github.com/seqeralabs/nextflow-tutorial)
@@ -12,12 +12,12 @@ Thus, I will try to list resources to review when I need to re-visit any topic a
 
 # Important definitions
 
-### Input and output 
+## Input and output 
 
 Structure to define **_input_** and **_output_**
 ```
 input:
-    <input qualifier> <input name>
+    <input qualifier (val,path,tuple) > <input name>
 
 output:
     <output qualifier> <output name> [, <option>: <option value>]
@@ -26,7 +26,7 @@ output:
 To show the standard output of the process in the terminal use the **Directive:**
     debug true
 
-### Multi line comments
+## Multi line comments
 
 Multi-line comments are specified inside `/*  <COMMENTS>  */`
 
@@ -36,20 +36,20 @@ multi-line comment written out
 of the script */
 ```
 
-### Parameters
+## Parameters
 
 Parameters are defined inside the pipeline as `params.variable` and can be called in execution using:
 
     nextflow run script.nf --variable user_defined_value
 
-### Channel factories
+## Channel factories
 
 The factory `channel.of` creates a queue channel with values as arguments
 
     ch1 = channel.of (1, 3, 5, 8)
     ch.view{ "value: $it" }
 
-### Order of assignment output
+## Order of assignment output
 
 ```groovy
 //--snippet--
@@ -68,7 +68,7 @@ workflow{
 }
 ```
 
-### Define a function (method)
+## Define a function (method)
 
 If a **return**  is not explicitly stated, groovy returns the last value evaluated.
 A method can be initiated by typing `def` or a type of **return** ike `String|int`
@@ -87,6 +87,84 @@ assert fib(10)==89
 
 ```
 
+## Modularization
+
+Re-use processes by using them as modules, similar to importing functions in **Python**
+
+```groovy
+include {PROCESS_NAME                   } from './modules.nf'  // <- loaded as alias
+include {PROCESS_NAME as ALIAS          } from './modules.nf'
+include {PROCESS1; PROCESS2; PROCESS3   } from './modules.nf' // <- multiple modules from same script
+```
+
+## Configuration file
+
+The `nextflow.config` file determines configuration settings. By default, it is looked in the current directory or the 
+script directory. 
+
+Can be specified in the execution command using ` -c < config file >`
+
+```groovy
+
+name = value // <- properties are specified with this syntax
+
+customPath = "$PATH:/my/app/folder" // <- can read environment variables
+
+alpha.x = 1
+alpha.y = 'string value...' // <- properties can be organized in scopes like this 
+beta {  //<- or like this
+    p = 2
+    q = 'another string...'
+}
+
+params.foo = 'óla' 
+params.bar = 'Mundo!' // <- params in config file override the ones in other scripts
+
+env.ALPHA = 'some value'
+env.BETA = "$HOME/some/path" 
+    // <- the 'env' scope defines variables to be exported into the execution environment
+
+process {
+    cpus = 10
+    memory = 8.GB
+}   // <- defines the directives for all processes
+
+process foo {
+    cpus = 10
+}   // <- defines the directive for process foo
+
+```
+
+### Execution environment in configuration file
+
+```groovy
+process.container = 'nextflow/rnaseq-nf'
+docker.enabled = true
+    // <- docker container
+    // <- if used with singularity, it will transform the docker container to a singularity img
+process.container = '/some/singularity/path/image.sif'
+singularity.enabled = true
+    // <- singularity container requires an absolute path
+process.conda = "/home/ubuntu/miniconda2/envs/nf-tutorial"
+    // <- specify conda environment for execution using absolute path
+```
+
+You can also specify specific container images for each process, preventing conflicts in large containers but making it harder
+to maintain. 
+
+```groovy
+process {
+  withName: foo {
+    container = 'some/image:x'
+  }
+  withName: bar {
+    container = 'other/image:y'
+  }
+}
+
+docker.enabled = true
+```
+ 
 # Notebook of activities
 
 ## 20230301
@@ -122,3 +200,9 @@ assert fib(10)==89
 - Expansion of variables sometimes requires the use of single quotes 
 -  How to define functions in the groovy language added note
 
+## 20230605 - Learning about modularization
+
+- Learn about how to use processes created in other modules, the framework for the nf-core project 
+- Understood how to pipe and manage outputs from processes into others inside a workflow
+- Read about defining workflow scope, workflow input/output, and calling out named workflows.
+- Reviewed how to set up and call a configuration file
