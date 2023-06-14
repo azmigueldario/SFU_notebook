@@ -111,18 +111,18 @@ name = value // <- properties are specified with this syntax
 customPath = "$PATH:/my/app/folder" // <- can read environment variables
 
 alpha.x = 1
-alpha.y = 'string value...' // <- properties can be organized in scopes like this 
+alpha.y = 'string value...' // <- properties can be organized in scopes 
 beta {  //<- or like this
     p = 2
     q = 'another string...'
 }
 
 params.foo = 'óla' 
-params.bar = 'Mundo!' // <- params in config file override the ones in other scripts
+params.bar = 'Mundo!' // <- overrides 'params.bar' found in other scripts
 
 env.ALPHA = 'some value'
 env.BETA = "$HOME/some/path" 
-    // <- the 'env' scope defines variables to be exported into the execution environment
+    // <- the 'env' scope defines variables to export for execution
 
 process {
     cpus = 10
@@ -141,7 +141,7 @@ process foo {
 process.container = 'nextflow/rnaseq-nf'
 docker.enabled = true
     // <- docker container
-    // <- if used with singularity, it will transform the docker container to a singularity img
+    // <- if used with singularity, transforms docker container to singularity img
 process.container = '/some/singularity/path/image.sif'
 singularity.enabled = true
     // <- singularity container requires an absolute path
@@ -165,6 +165,32 @@ process {
 docker.enabled = true
 ```
  
+### Defining what container to use
+
+Explanation of the line used in most nf.core modules.
+
+We first eval two conditions:
+- `workflow.containerEngine == 'singularity` means that the defined container engine is singularity
+- `!task.ext.singularity_pull_docker_container` means that this option was not defined inside the `config` file
+
+If both are true, it uses the singularity container repository `https://depot.galaxy...` and if not, it works
+with docker containers repository `quay.io/biocontainers...`
+
+
+```groovy
+
+//-----process-chunk-------//
+
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/gatk4:4.2.6.1--hdfd78af_0':
+        'quay.io/biocontainers/gatk4:4.2.6.1--hdfd78af_0' }"
+
+    input:
+
+//----- rest of process-chunk-------//
+```
+
+
 # Notebook of activities
 
 ## 20230301
@@ -206,3 +232,10 @@ docker.enabled = true
 - Understood how to pipe and manage outputs from processes into others inside a workflow
 - Read about defining workflow scope, workflow input/output, and calling out named workflows.
 - Reviewed how to set up and call a configuration file
+
+## 20230605 - Finished hands-on training for variant calling pipeline
+
+- Read and understood lines explaining how to call singularity containers with and without pulling from docker containers repository
+- Viewed the playlist of nextflow training from nf-core in March 2023
+-
+-
