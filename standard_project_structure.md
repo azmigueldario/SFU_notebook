@@ -25,23 +25,23 @@ The **raw_data** will probably be held in a separate subfolder to facilitate dat
 3. `project/processed_data` will contain intermediate results or cleaned datasets, **not the raw data**
 4. `project/output` contains processed results, can be organized by subtype or date
 
-```groovy
-project
-├── notebook
-│   └── notebook.md
-├── output
-│   ├── cgMLST.csv
-│   ├── run-final.log
-│   └── snp-distances.csv
-├── processed_data
-│   ├── metadata_samples.csv
-│   └── temporary_results.csv
-└── scripts
-    ├── SNV_call.sh
-    ├── assembly.sh
-    ├── assembly_qc.sh
-    ├── fastqc_raw.sh
-    └── phylogenetic_tree.sh
+```sh
+    project
+    ├── notebook
+    │   └── notebook.md
+    ├── output
+    │   ├── cgMLST.csv
+    │   ├── run-final.log
+    │   └── snp-distances.csv
+    ├── processed_data
+    │   ├── metadata_samples.csv
+    │   └── temporary_results.csv
+    └── scripts
+        ├── SNV_call.sh
+        ├── assembly.sh
+        ├── assembly_qc.sh
+        ├── fastqc_raw.sh
+        └── phylogenetic_tree.sh
 ```
 
 ## Document project advances and work in a markdown notebook
