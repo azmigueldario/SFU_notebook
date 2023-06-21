@@ -55,7 +55,7 @@ salloc --time=1:30:0 --ntasks=1 --cpus-per-task=4  --mem-per-cpu=8G --account=de
 # eagle
 salloc --time=1:30:00 --ntasks=1 --cpus-per-task=6  --mem-per-cpu=4G 
 # max in a node
-salloc --time=1:30:00 --ntasks=1 --cpus-per-task=10  --mem-per-cpu=11G 
+salloc --time=1:30:00 --ntasks=1 --cpus-per-task=8  --mem-per-cpu=11G 
 ```
 
 ## Data transfer between cluster
