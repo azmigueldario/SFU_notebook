@@ -96,6 +96,23 @@ include {PROCESS_NAME                   } from './modules.nf'  // <- loaded as a
 include {PROCESS_NAME as ALIAS          } from './modules.nf'
 include {PROCESS1; PROCESS2; PROCESS3   } from './modules.nf' // <- multiple modules from same script
 ```
+## File qualifier
+
+Many name operations only work when called inside the workflow declaration or after using `file()` to load an object
+
+```groovy
+workflow {
+    my_file = file(object_file)
+    my_file.getName()
+}
+
+//----- process //------
+script:
+"""
+command -reads $reads /
+        -genome_dir ${reads.getParent()}
+"""
+```
 
 ## Configuration file
 
@@ -248,5 +265,12 @@ for i in *_1.fastq.gz;
 
 - Read and understood lines explaining how to call singularity containers with and without pulling from docker containers repository
 - Viewed the playlist of nextflow training from nf-core in March 2023
--
--
+
+## 20230614 - Reviewing March 2023 nf-core training session I
+
+- Nextflow has implicit parallelism, allows simultaneous execution of processes that are usually staged in a linear manner (like `fastqc`)
+- Reproducibility is guaranteed because the pipeline is scalable to use different container/software management tools and executors in cloud or HPC environment
+- nf-core is an initiative to curate and collect pipelines in nextflow language, mostly focused on genomics for now
+    - modules or processes are made readily available in nf-core (more than 700 available)
+    - based on community development, a common template, and an online collaborative environment
+
