@@ -190,6 +190,17 @@ with docker containers repository `quay.io/biocontainers...`
 //----- rest of process-chunk-------//
 ```
 
+## Creating a samplesheet for nf-core
+
+```sh
+echo "sample,fastq_1,fastq_2" > samplesheet.csv
+for i in *_1.fastq.gz;
+    do 
+    echo ${i%_1.fastq.gz},$(readlink -f $i),$(readlink -f ${i%_1.fastq.gz}_2.fastq.gz) >> samplesheet.csv
+    done
+
+# ${var%pattern} removes the section of 'var' that matches 'pattern' 
+```
 
 # Notebook of activities
 
